@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -7,10 +8,6 @@ module.exports = {
     app: './src/index.js',
     //print: './src/print.js'
   },
-  devtool: 'inline-source-map',
-  devServer: {
-    contentBase: './dist'
-  },
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
@@ -18,6 +15,22 @@ module.exports = {
       template: "./src/index.template.html"
     }),
   ],
+  optimization: {
+    splitChunks: {
+      name: true,
+      minChunks: 2,
+      minSize: 1,
+      maxSize: 30,
+      cacheGroups: {
+        commons: {
+          name: 'public',
+          chunks: 'all',
+          minChunks: 2,
+          minSize: 1, //这个是文件最小值，默认30kb。小于30kb是不会抽取公共代码的
+        }
+      }
+    }
+  },
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist')
